@@ -7,8 +7,9 @@
 <div>
     <form asp-action="UpdateIndentStatus" method="post">
         <div class="row">
-            <label class="col-md-4 float-right text-right" >Indent Number</label>
-            <input type="text" name="IndentNumber" id="IndentNumber" disabled  value="@ViewBag.IndentNo"/>
+            <label class="col-md-4 float-right text-right">Indent Number</label>
+            <input type="text" name="IndentNumber" id="IndentNumber" disabled value="@ViewBag.IndentNo" />
+            <input type="hidden" name="IndentNo" value="@ViewBag.IndentNo" />
         </div>
         <div class="row">
             <label class="col-md-4 float-right text-right" name="IndentStatus">IndentStatus</label>

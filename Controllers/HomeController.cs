@@ -24,8 +24,9 @@ namespace OrderManagementApproval.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index()
+        public IActionResult Index(long IndentNo)
         {
+            ViewBag.IndentNo = "12345";
             return View();
         }
 
@@ -35,9 +36,8 @@ namespace OrderManagementApproval.Controllers
         {
             string userName = loginCredentials["UserName"];
             string password = loginCredentials["Password"];
-
-
-            ViewBag.IndentNo = "12345";
+            string indentNo = loginCredentials["IndentNo"];
+            ViewBag.IndentNo= indentNo;
 
             try
             {
@@ -72,9 +72,9 @@ namespace OrderManagementApproval.Controllers
         }
 
         [HttpPost]
-        public void UpdateIndentStatus(IFormCollection updateStatus)
+        public IActionResult UpdateIndentStatus(IFormCollection updateStatus)
         {
-            string indentNumber = updateStatus["IndentNumber"];
+            string indentNumber = updateStatus["IndentNo"];
             string status = updateStatus["UpdateStatus"];
             string textArea = updateStatus["TextArea"];
             try
@@ -86,10 +86,13 @@ namespace OrderManagementApproval.Controllers
                     connection.Open();
                     SqlCommand testCMD = new SqlCommand(query, connection);
                 }
+                ViewBag.Message = "Indent " + indentNumber + " is " + status + " successfully.";
+                return View();
             }
             catch (Exception ex)
             {
-
+                ViewBag.Message = ex;
+                return View();
             }
         }
 
