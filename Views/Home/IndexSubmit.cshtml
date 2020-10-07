@@ -1,0 +1,36 @@
+﻿@model List<OrderManagementApproval.Models.ApprovalStatus>
+
+@{
+    ViewData["Title"] = " Indent Approval Page ";
+}
+
+<div>
+    <form asp-action="UpdateIndentStatus" method="post">
+        <div class="row">
+            <label class="col-md-4 float-right text-right" >Indent Number</label>
+            <input type="text" name="IndentNumber" id="IndentNumber" disabled  value="@ViewBag.IndentNo"/>
+        </div>
+        <div class="row">
+            <label class="col-md-4 float-right text-right" name="IndentStatus">IndentStatus</label>
+            <div class="col-md-2 float-left text-left">
+                <select name="UpdateStatus" id="UpdateStatus" onchange="indentStatusCheck(event)">
+                    <option> Select Status </option>
+                    @foreach (var item in Model)
+                    {
+                        <option> @item.Status</option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <label class="col-md-4 float-right text-right" name="Remarks">Remarks</label>
+            <textarea class="col-md-6 float-left text-left" id="txtarea_Remarks" name="TextArea"></textarea>
+        </div>
+        <div class="row">
+            <div class="col-md-10 float-right text-right">
+                <input type="submit" value="Submit" id="ApprovalSubmit" disabled />
+            </div>
+        </div>
+    </form>
+</div>
+<script src="~/js/Validation.js"></script>

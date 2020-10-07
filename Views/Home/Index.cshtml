@@ -1,0 +1,25 @@
+﻿
+
+<form asp-action="IndexSubmit" method="post">
+
+    <div class="container">
+        <div class="row">
+            <label class="col-md-3 float-right" for="UserName">UserName</label>
+            <input class="col-md-3 float-left" id="UserName" name="UserName" type="text" value="" onkeyup="userNamePasswordCheck(event)" />
+        </div>
+        <div class="row">
+            <label class="col-md-3 float-right" for="Password">Password</label>
+            <input class="col-md-3 float-left" id="Password" name="Password" type="password" value="" onkeyup="userNamePasswordCheck(event)" />
+        </div>
+        <div class="row col-md-12">
+            <div class="col-md-3"></div>
+            <div class="col-md-3 align-left">
+                <div class="col-md-9"></div>
+                <input type="submit" class="align-left float-left col-md-9" name="LogIn" id="Login" value="Log In" disabled />
+            </div>
+        </div>
+    </div>
+</form>
+
+
+<script src="~/js/Validation.js"></script>
