@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
 using OrderManagementApproval.Models;
 using UpdateStatus = OrderManagementApproval.Models.UpdateStatus;
@@ -24,12 +25,47 @@ namespace OrderManagementApproval.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index(long IndentNo)
+        [Route("")]
+        [Route("{id?}")]
+        [Route("Home")]
+        [Route("Home/{id?}")]
+        public IActionResult Index(long IndentNo, string ErrorMessage = "")
         {
-            ViewBag.IndentNo = "12345";
+            ViewBag.IndentNo = IndentNo;
+            ViewBag.ErrorMessage = ErrorMessage;
             return View();
         }
 
+        private bool LogInCheck(string userName, string password)
+        {
+            bool isAuthenticated = false;
+            //TODO: Check the user if it is admin or normal user, (true-Admin, false- Normal user)  
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["SqlConnection"].ToString()))
+                {
+                    string query = "select Count(*) from [dbo].[UserMaster] where email= " + "'" + userName + "'" + " and   password = " + "'" + password + "'";
+                    connection.Open();
+                    SqlCommand testCMD = new SqlCommand(query, connection);
+                    SqlDataReader sdr = testCMD.ExecuteReader();
+
+                    while (sdr.Read())
+                    {
+                        int userFound = Convert.ToInt32(sdr[0]);
+                        if (userFound == 1)
+                        {
+                            isAuthenticated = true;
+                        }
+                    }
+                    connection.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return isAuthenticated;
+        }
 
         [HttpPost]
         public IActionResult IndexSubmit(IFormCollection loginCredentials)
@@ -37,33 +73,45 @@ namespace OrderManagementApproval.Controllers
             string userName = loginCredentials["UserName"];
             string password = loginCredentials["Password"];
             string indentNo = loginCredentials["IndentNo"];
-            ViewBag.IndentNo= indentNo;
+            ViewBag.IndentNo = indentNo;
 
             try
             {
-                List<ApprovalStatus> approvalStatusList = new List<ApprovalStatus>();
-                using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["SqlConnection"].ToString()))
+                bool isAuthenticated = LogInCheck(userName, password);
+                if (isAuthenticated)
                 {
-                    connection.Open();
-                    SqlCommand testCMD = new SqlCommand("select ApprovalStatusID , ApprovalStatus from ApprovalStatus", connection);
-
-                    SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(testCMD);
-
-                    DataSet dataSet = new DataSet();
-                    sqlDataAdapter.Fill(dataSet);
-
-                    int counter = 0;
-
-                    while (counter < dataSet.Tables[0].Rows.Count)
+                    List<ApprovalStatus> approvalStatusList = new List<ApprovalStatus>();
+                    using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["SqlConnection"].ToString()))
                     {
-                        ApprovalStatus approvalStatus = new ApprovalStatus();
-                        approvalStatus.Id = Convert.ToInt32(dataSet.Tables[0].Rows[counter]["ApprovalStatusID"]);
-                        approvalStatus.Status = Convert.ToString(dataSet.Tables[0].Rows[counter]["ApprovalStatus"]);
-                        approvalStatusList.Add(approvalStatus);
-                        counter++;
+                        connection.Open();
+                        SqlCommand testCMD = new SqlCommand("select ApprovalStatusID , ApprovalStatus from ApprovalStatus", connection);
+
+                        SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(testCMD);
+
+                        DataSet dataSet = new DataSet();
+                        sqlDataAdapter.Fill(dataSet);
+
+                        int counter = 0;
+
+                        while (counter < dataSet.Tables[0].Rows.Count)
+                        {
+                            ApprovalStatus approvalStatus = new ApprovalStatus();
+                            approvalStatus.Id = Convert.ToInt32(dataSet.Tables[0].Rows[counter]["ApprovalStatusID"]);
+                            approvalStatus.Status = Convert.ToString(dataSet.Tables[0].Rows[counter]["ApprovalStatus"]);
+                            approvalStatusList.Add(approvalStatus);
+                            counter++;
+                        }
                     }
+                    return View(approvalStatusList);
                 }
-                return View(approvalStatusList);
+                else
+                {
+                    var routeValues = new RouteValueDictionary {
+                             { "id", indentNo },
+                            { "ErrorMessage",  "Please enter valid Credentials" }
+                            };
+                    return RedirectToAction("Index", routeValues);
+                }
             }
             catch (Exception ex)
             {

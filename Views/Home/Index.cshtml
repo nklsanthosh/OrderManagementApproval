@@ -2,6 +2,11 @@
 
 <form asp-action="IndexSubmit" method="post">
 
+    @if (ViewBag.ErrorMessage != "")
+    {
+        <p> @ViewBag.ErrorMessage </p>
+    }
+
     <div class="container">
         <div class="row">
             <label class="col-md-3 float-right" for="UserName">UserName</label>
@@ -11,7 +16,7 @@
             <label class="col-md-3 float-right" for="Password">Password</label>
             <input class="col-md-3 float-left" id="Password" name="Password" type="password" value="" onkeyup="userNamePasswordCheck(event)" />
         </div>
-        <input type="hidden" name="IndentNo" value="@ViewBag.IndentNo"/>
+        <input type="hidden" name="IndentNo" value="@ViewBag.IndentNo" />
         <div class="row col-md-12">
             <div class="col-md-3"></div>
             <div class="col-md-3 align-left">
