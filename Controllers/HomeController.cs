@@ -26,17 +26,17 @@ namespace OrderManagementApproval.Controllers
 
         [HttpGet]
         [Route("")]
-        [Route("{id?}")]
+        [Route("{Id?}")]
         [Route("Home")]
-        [Route("Home/{id?}")]
-        public IActionResult Index(long IndentNo, string ErrorMessage = "")
+        [Route("Home/{Id?}")]       
+        public IActionResult Index(long Id, string ErrorMessage = "")
         {
-            ViewBag.IndentNo = IndentNo;
+            ViewBag.IndentNo = Id;
             ViewBag.ErrorMessage = ErrorMessage;
             return View();
         }
 
-        private bool LogInCheck(string userName, string password)
+        private bool LogInCheck(string userName, string password, long indentNo)
         {
             bool isAuthenticated = false;
             //TODO: Check the user if it is admin or normal user, (true-Admin, false- Normal user)  
@@ -44,7 +44,10 @@ namespace OrderManagementApproval.Controllers
             {
                 using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["SqlConnection"].ToString()))
                 {
-                    string query = "select Count(*) from [dbo].[UserMaster] where email= " + "'" + userName + "'" + " and   password = " + "'" + password + "'";
+                    // string query = "select Count(*) from [dbo].[UserMaster] where email= " + "'" + userName + "'" + " and   password = " + "'" + password + "'";
+
+                    string query = "select Count(*) from IndentApproval where ApprovalID=  (select userid from UserMaster where email= " + "'" + userName + "'" + " and   password = " + "'" + password + "'" + ") and IndentID = " + indentNo;
+
                     connection.Open();
                     SqlCommand testCMD = new SqlCommand(query, connection);
                     SqlDataReader sdr = testCMD.ExecuteReader();
@@ -72,12 +75,12 @@ namespace OrderManagementApproval.Controllers
         {
             string userName = loginCredentials["UserName"];
             string password = loginCredentials["Password"];
-            string indentNo = loginCredentials["IndentNo"];
+            long indentNo = Convert.ToInt64(loginCredentials["IndentNo"]);
             ViewBag.IndentNo = indentNo;
 
             try
             {
-                bool isAuthenticated = LogInCheck(userName, password);
+                bool isAuthenticated = LogInCheck(userName, password, indentNo);
                 if (isAuthenticated)
                 {
                     List<ApprovalStatus> approvalStatusList = new List<ApprovalStatus>();
@@ -108,7 +111,7 @@ namespace OrderManagementApproval.Controllers
                 {
                     var routeValues = new RouteValueDictionary {
                              { "id", indentNo },
-                            { "ErrorMessage",  "Please enter valid Credentials" }
+                            { "ErrorMessage",  "Please enter valid Credentials / You are not authorized to apporve IndentNo "+ indentNo }
                             };
                     return RedirectToAction("Index", routeValues);
                 }
@@ -133,9 +136,19 @@ namespace OrderManagementApproval.Controllers
                     string query = "update IndentApproval set ApprovalStatusID = (select ApprovalStatusID from ApprovalStatus where ApprovalStatus = " + "'" + status + "'" + "), Remarks= " + "'" + textArea + "'" + " where IndentID = " + indentNumber;
                     connection.Open();
                     SqlCommand testCMD = new SqlCommand(query, connection);
+                    int a = testCMD.ExecuteNonQuery();
+                    if (a != 0)
+                    {
+                        ViewBag.Message = "Indent " + indentNumber + " is updated successfully to "+ status;
+
+                    }
+                    else
+                    {
+                        ViewBag.Message = "Indent " + indentNumber + " is not updated successfully.";
+                    }
+                    return View();
                 }
-                ViewBag.Message = "Indent " + indentNumber + " is " + status + " successfully.";
-                return View();
+
             }
             catch (Exception ex)
             {
