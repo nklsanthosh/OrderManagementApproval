@@ -3,9 +3,11 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - OrderManagementApproval</title>
+    <title>@ViewData["Title"] - Order Management Approval</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
     <link rel="stylesheet" href="~/css/site.css" />
+    <link href="~/css/styles.css" rel="stylesheet">
 </head>
 <body>
     @*<header>
@@ -29,6 +31,17 @@
             </div>
         </nav>
     </header>*@
+    <header>
+        <nav class="navbar"  style="background-color: #E7F8F0!important">
+            <!-- <div class="container" style="background-color: #E7F8F0!important">-->
+            <div id="image" class="col-1">
+                <img src="~/Images/logo.png" height="70" width="70" />
+                
+            </div>
+            <div id="text" class="col-11"style="float:left;font-size: medium;font-family:Arial;font-weight:Bold;align-self: flex-end;">ORDER MANAGEMENT SYSTEM</div>
+            <!--</div>-->
+        </nav>
+    </header>
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
@@ -37,7 +50,16 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2020 - OrderManagementApproval - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            <div class="footnote col-1">
+                <span>Powered By</span><br />
+                <img src="~/Images/icons/logo_devlup_home_v2.jpg" width="100" height="70" />
+            </div>
+            <div class="footnote col-10">
+                <span>&nbsp;</span><br />
+                <span>&nbsp;</span><br />
+                <span class="footertext">Copyrights © 2020 Devlup Solutions</span><br />
+                <span class="footertext">All rights reserved.</span>
+            </div>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

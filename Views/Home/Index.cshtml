@@ -1,31 +1,76 @@
 ﻿
 
-<form asp-action="IndexSubmit" method="post">
-
-    @if (ViewBag.ErrorMessage != "")
+    <form asp-action="IndexSubmit" method="post">
+   @if (ViewBag.ErrorMessage != "")
     {
         <p> @ViewBag.ErrorMessage </p>
     }
 
-    <div class="container">
-        <div class="row">
-            <label class="col-md-3 float-right" for="UserName">UserName</label>
-            <input class="col-md-3 float-left" id="UserName" name="UserName" type="text" value="" onkeyup="userNamePasswordCheck(event)" />
-        </div>
-        <div class="row">
-            <label class="col-md-3 float-right" for="Password">Password</label>
-            <input class="col-md-3 float-left" id="Password" name="Password" type="password" value="" onkeyup="userNamePasswordCheck(event)" />
-        </div>
-        <input type="hidden" name="IndentNo" value="@ViewBag.IndentNo" />
-        <div class="row col-md-12">
-            <div class="col-md-3"></div>
-            <div class="col-md-3 align-left">
-                <div class="col-md-9"></div>
-                <input type="submit" class="align-left float-left col-md-9" name="LogIn" id="Login" value="Log In" disabled />
+        @*<div class="container">
+            <div class="row">
+                <label class="col-md-3 float-right" for="UserName">UserName</label>
+                <input class="col-md-3 float-left" id="UserName" name="UserName" type="text" value="" onkeyup="userNamePasswordCheck(event)" />
+            </div>
+            <div class="row">
+                <label class="col-md-3 float-right" for="Password">Password</label>
+                <input class="col-md-3 float-left" id="Password" name="Password" type="password" value="" onkeyup="userNamePasswordCheck(event)" />
+            </div>
+            <input type="hidden" name="IndentNo" value="@ViewBag.IndentNo"/>
+            <div class="row col-md-12">
+                <div class="col-md-3"></div>
+                <div class="col-md-3 align-left">
+                    <div class="col-md-9"></div>
+                    <input type="submit" class="align-left float-left col-md-9" name="LogIn" id="Login" value="Log In" disabled />
+                </div>
+            </div>
+        </div>*@
+        <div class="topFrame">
+            <div class="innerTopFrame">
+                <div class="main-container box-shadow-light">
+                    <section id="loginForm">
+                        <div class="content-center">
+                            <div class="title-logo">
+                                
+                            </div>
+                            @*<div class="login-logo"><img src="~/Content/images/rico-logo.png" alt="RICO"></div>*@
+                            <div class="vs5">&nbsp;</div>
+                            <div class="login-form">
+                                <div class="left-title">
+                                    <img src="~/Images/icons/icon_member.jpg" /><br />
+                                    <span class="welcome">Welcome</span>
+                                </div><br /><br />
+                                <div class="inner-addon left-addon">
+                                    <!--<label for="UserName">User Name</label>-->
+                                    <input id="UserName" name="UserName" type="text" value="" class="textbox username" placeholder="Enter Username" onkeyup="userNamePasswordCheck(event)" />
+                                </div>
+                                <div class="vs10">&nbsp;</div>
+                                <div class="inner-addon left-addon">
+                                    <i class="fa fa-lock"></i>
+                                    <!--<label for="Password">Password</label>-->
+                                    <input id="Password" name="Password" type="password" value="" class="textbox password" placeholder="Enter Password" icon="/images/icon_password.jpg" onkeyup="userNamePasswordCheck(event)" />
+                                    @*<input type="password" class="form-control" placeholder="Password" />*@
+                                    <input type="hidden" name="IndentNo" value="@ViewBag.IndentNo" />
+                                </div>
+                                <div class="vs5">&nbsp;</div>
+                                <div class="row">
+                                    <div class="col-md-4 col-sm-5 col-xl-12">
+                                        <input type="submit" class="button align-left float-left col-md-9" name="LogIn" id="Login" value="Log In" disabled />
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </section>
+                    @*<div class="content-right">
+                        <img src="~/Content/images/loginright.png">
+                    </div>
+                    <div class="vs0">&nbsp;</div>*@
+                </div>
+
+
             </div>
         </div>
-    </div>
-</form>
+    </form>
 
 
 <script src="~/js/Validation.js"></script>

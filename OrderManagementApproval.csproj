@@ -6,6 +6,60 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="wwwroot\Images\add-icon.png" />
+    <None Include="wwwroot\Images\business-report-icon.png" />
+    <None Include="wwwroot\Images\clear-icon.png" />
+    <None Include="wwwroot\Images\create-icon.png" />
+    <None Include="wwwroot\Images\icons\btn_add_category.jpg" />
+    <None Include="wwwroot\Images\icons\btn_add_indent.jpg" />
+    <None Include="wwwroot\Images\icons\btn_add_item.jpg" />
+    <None Include="wwwroot\Images\icons\btn_add_masters.jpg" />
+    <None Include="wwwroot\Images\icons\btn_add_unit.jpg" />
+    <None Include="wwwroot\Images\icons\btn_clear_fields.jpg" />
+    <None Include="wwwroot\Images\icons\btn_create_indent.jpg" />
+    <None Include="wwwroot\Images\icons\btn_dropdown.jpg" />
+    <None Include="wwwroot\Images\icons\btn_generate_report.jpg" />
+    <None Include="wwwroot\Images\icons\btn_password.jpg" />
+    <None Include="wwwroot\Images\icons\btn_remove_field.jpg" />
+    <None Include="wwwroot\Images\icons\btn_search_indent.jpg" />
+    <None Include="wwwroot\Images\icons\btn_select_date.jpg" />
+    <None Include="wwwroot\Images\icons\btn_update_field.jpg" />
+    <None Include="wwwroot\Images\icons\btn_username.jpg" />
+    <None Include="wwwroot\Images\icons\btn_view_indent.jpg" />
+    <None Include="wwwroot\Images\icons\grey_icon.png" />
+    <None Include="wwwroot\Images\icons\horizontal_line_icon.png" />
+    <None Include="wwwroot\Images\icons\icon_add_category.png" />
+    <None Include="wwwroot\Images\icons\icon_add_item_unit.png" />
+    <None Include="wwwroot\Images\icons\icon_add_masters.png" />
+    <None Include="wwwroot\Images\icons\icon_clear_field.png" />
+    <None Include="wwwroot\Images\icons\icon_close_green.png" />
+    <None Include="wwwroot\Images\icons\icon_close_grey.png" />
+    <None Include="wwwroot\Images\icons\icon_create_indent.png" />
+    <None Include="wwwroot\Images\icons\icon_date.png" />
+    <None Include="wwwroot\Images\icons\icon_downarrow.png" />
+    <None Include="wwwroot\Images\icons\icon_generate_reprot.png" />
+    <None Include="wwwroot\Images\icons\icon_member.jpg" />
+    <None Include="wwwroot\Images\icons\icon_password.png" />
+    <None Include="wwwroot\Images\icons\icon_search_indent.png" />
+    <None Include="wwwroot\Images\icons\icon_update_field.png" />
+    <None Include="wwwroot\Images\icons\icon_username.png" />
+    <None Include="wwwroot\Images\icons\img_loader.jpg" />
+    <None Include="wwwroot\Images\icons\logo.ico" />
+    <None Include="wwwroot\Images\icons\logo_devlup.jpg" />
+    <None Include="wwwroot\Images\icons\logo_devlup_home_v2.jpg" />
+    <None Include="wwwroot\Images\icons\logo_devlup_inner.jpg" />
+    <None Include="wwwroot\Images\icons\logo_devlup_inner_v2.jpg" />
+    <None Include="wwwroot\Images\icons\logo_devlup_solutions_v2.jpg" />
+    <None Include="wwwroot\Images\icons\logo_slpp_home.jpg" />
+    <None Include="wwwroot\Images\icons\logo_slpp_inner.jpg" />
+    <None Include="wwwroot\Images\login.png" />
+    <None Include="wwwroot\Images\logo.png" />
+    <None Include="wwwroot\Images\logout.png" />
+    <None Include="wwwroot\Images\search-icon.png" />
+    <None Include="wwwroot\Images\update-icon.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.7.0" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
   </ItemGroup>
