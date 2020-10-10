@@ -3,7 +3,7 @@
     <form asp-action="IndexSubmit" method="post">
    @if (ViewBag.ErrorMessage != "")
     {
-        <p> @ViewBag.ErrorMessage </p>
+        <p class="alert-danger"> @ViewBag.ErrorMessage </p>
     }
 
         @*<div class="container">
