@@ -13,11 +13,13 @@ using Microsoft.Extensions.Logging;
 using OrderManagementApproval.Models;
 using UpdateStatus = OrderManagementApproval.Models.UpdateStatus;
 
+
 namespace OrderManagementApproval.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        const string SessionUserID = "_UserId";
 
         public HomeController(ILogger<HomeController> logger)
         {
@@ -28,7 +30,7 @@ namespace OrderManagementApproval.Controllers
         [Route("")]
         [Route("{Id?}")]
         [Route("Home")]
-        [Route("Home/{Id?}")]       
+        [Route("Home/{Id?}")]
         public IActionResult Index(long Id, string ErrorMessage = "")
         {
             ViewBag.IndentNo = Id;
@@ -46,7 +48,7 @@ namespace OrderManagementApproval.Controllers
                 {
                     // string query = "select Count(*) from [dbo].[UserMaster] where email= " + "'" + userName + "'" + " and   password = " + "'" + password + "'";
 
-                    string query = "select Count(*) from IndentApproval where ApprovalID=  (select userid from UserMaster where email= " + "'" + userName + "'" + " and   password = " + "'" + password + "'" + ") and IndentID = " + indentNo;
+                    string query = "select ApprovalId from IndentApproval where ApprovalID=  (select userid from UserMaster where email= " + "'" + userName + "'" + " and   password = " + "'" + password + "'" + ") and IndentID = " + indentNo;
 
                     connection.Open();
                     SqlCommand testCMD = new SqlCommand(query, connection);
@@ -54,9 +56,10 @@ namespace OrderManagementApproval.Controllers
 
                     while (sdr.Read())
                     {
-                        int userFound = Convert.ToInt32(sdr[0]);
-                        if (userFound == 1)
+                        long userFound = Convert.ToInt64(sdr[0]);
+                        if (userFound != 0)
                         {
+                            HttpContext.Session.SetString(SessionUserID, userFound.ToString());
                             isAuthenticated = true;
                         }
                     }
@@ -133,13 +136,17 @@ namespace OrderManagementApproval.Controllers
                 List<ApprovalStatus> approvalStatusList = new List<ApprovalStatus>();
                 using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["SqlConnection"].ToString()))
                 {
-                    string query = "update IndentApproval set ApprovalStatusID = (select ApprovalStatusID from ApprovalStatus where ApprovalStatus = " + "'" + status + "'" + "), Remarks= " + "'" + textArea + "'" + " where IndentID = " + indentNumber;
+                    long ApprovalId = Convert.ToInt64(HttpContext.Session.GetString(SessionUserID));
+
+                    //string query = "update IndentApproval set ApprovalStatusID = (select ApprovalStatusID from ApprovalStatus where ApprovalStatus = " + "'" + status + "'" + "), Remarks= " + "'" + textArea + "'" + " where IndentID = " + indentNumber;
+
+                    string query = "update IndentApproval set ApprovalStatusID = (select ApprovalStatusID from ApprovalStatus where ApprovalStatus = " + "'" + status + "'" + "), Remarks= " + "'" + textArea + "'" + " , ModifiedBy = " + "'" + ApprovalId+ "'" + " , ModifiedDate = " + "'" + DateTime.Now + "'" + " where IndentID = " + indentNumber;
                     connection.Open();
                     SqlCommand testCMD = new SqlCommand(query, connection);
                     int a = testCMD.ExecuteNonQuery();
                     if (a != 0)
                     {
-                        ViewBag.Message = "Indent " + indentNumber + " is updated successfully to "+ status;
+                        ViewBag.Message = "Indent " + indentNumber + " is updated successfully to " + status;
 
                     }
                     else
