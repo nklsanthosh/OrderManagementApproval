@@ -5,8 +5,8 @@
 }
 
 @*<div style="background-color:#ffffff;align-self:center" >*@
-    <form asp-action="UpdateIndentStatus" method="post">
-        @*<div class="row">
+<form asp-action="UpdateIndentStatus" method="post">
+    @*<div class="row">
             <label class="col-md-4 float-right text-right">Indent Number</label>
             <input type="text" name="IndentNumber" id="IndentNumber" disabled value="@ViewBag.IndentNo" />
             <input type="hidden" name="IndentNo" value="@ViewBag.IndentNo" />
@@ -33,62 +33,68 @@
             </div>
         </div>*@
 
-        <div class="topFrame">
-            <div class="innerTopFrame">
-                <div class="main-container box-shadow-light">
-                    <section id="mainForm">
-                        <div class="content-center">
-                            <div class="title-logo">
+    <div class="topFrame">
+        <div class="innerTopFrame">
+            <div class="main-container box-shadow-light">
+                <section id="mainForm">
+                    <div class="content-center">
+                        <div class="title-logo">
 
+                        </div>
+                        @*<div class="login-logo"><img src="~/Content/images/rico-logo.png" alt="RICO"></div>*@
+                        <div class="vs5">&nbsp;</div>
+                        <div class="main-form">
+                            <div class="row">
+                                <!--<label for="UserName">User Name</label>-->
+                                <label class="col-md-4 float-left text-right label">Indent Number</label>
+                                <input type="text" class="textboxinner" name="IndentNumber" id="IndentNumber" disabled value="@ViewBag.IndentNo" />
+                                <input type="hidden" name="IndentNo" value="@ViewBag.IndentNo" />
+                                <input type="hidden" id="ApprovalStatus" name="ApprovalStatus" value="@ViewBag.ApprovalStatus" />
                             </div>
-                            @*<div class="login-logo"><img src="~/Content/images/rico-logo.png" alt="RICO"></div>*@
-                            <div class="vs5">&nbsp;</div>
-                            <div class="main-form">
-                                <div class="row">
-                                    <!--<label for="UserName">User Name</label>-->
-                                    <label class="col-md-4 float-left text-right label">Indent Number</label>
-                                    <input type="text" class="textboxinner" name="IndentNumber" id="IndentNumber" disabled value="@ViewBag.IndentNo" />
-                                    <input type="hidden" name="IndentNo" value="@ViewBag.IndentNo" />
-                                </div>
-                                <div class="vs10">&nbsp;</div>
-                                <div class="inner-addon left-addon">
-                                    <label class="col-md-4 float-left text-right label" name="IndentStatus">Indent Status</label>
-                                    @*<div class="col-md-2 float-left text-left">*@
-                                        <select name="UpdateStatus" class="dropdowninner" id="UpdateStatus" onchange="indentStatusCheck(event)">
-                                            <option class="optiontext"> Select Status </option>
-                                            @foreach (var item in Model)
-                                            {
-                                                <option> @item.Status</option>
-                                            }
-                                        </select>
-                                    @*</div>*@
-                                </div>
-                                <div class="vs10">&nbsp;</div>
-                                <div class="inner-addon left-addon">
-                                    <label class="col-md-4 float-left text-right label" name="Remarks">Remarks</label>
-                                    <textarea class="col-md-6 float-left text-left textareainner" id="txtarea_Remarks" name="TextArea"></textarea>
-                                </div>
-                                <div class="vs10">&nbsp;</div>
-                                <div class="row-center">
-                                    <input type="submit" class="button buttonsubmit" value="Submit" id="ApprovalSubmit" disabled />
-                                    @*<div class="col-md-4 col-sm-5 col-xl-12">
+                            <div class="vs10">&nbsp;</div>
+                            <div class="inner-addon left-addon">
+                                <label class="col-md-4 float-left text-right label" name="IndentStatus">Indent Status</label>
+                                @*<div class="col-md-2 float-left text-left">*@
+                                <select name="UpdateStatus" class="dropdowninner" id="UpdateStatus" onchange="indentStatusCheck(event)">
+                                    <option class="optiontext"> Select Status </option>
+                                    @foreach (var item in Model)
+                                    {
+                                        <option> @item.Status</option>
+                                    }
+                                </select>
+                                @*</div>*@
+                            </div>
+                            <div class="vs10">&nbsp;</div>
+                            <div class="inner-addon left-addon">
+                                <label class="col-md-4 float-left text-right label" name="Remarks">Remarks</label>
+                                <textarea class="col-md-6 float-left text-left textareainner" id="txtarea_Remarks" name="TextArea"></textarea>
+                            </div>
+                            <div class="vs10">&nbsp;</div>
+                            <div class="row-center">
+                                <input type="submit" class="button buttonsubmit" value="Submit" id="ApprovalSubmit" disabled />
+                                @*<div class="col-md-4 col-sm-5 col-xl-12">
                                         <input type="submit" class="button buttonsubmit" value="Submit" id="ApprovalSubmit" disabled />
                                     </div>*@
-                                </div>
                             </div>
                         </div>
-                    </section>
-                </div>
-                    
-                    @*<div class="content-right">
-                        <img src="~/Content/images/loginright.png">
                     </div>
-                    <div class="vs0">&nbsp;</div>*@
-                </div>
-
-
+                </section>
             </div>
+
+            @*<div class="content-right">
+                    <img src="~/Content/images/loginright.png">
+                </div>
+                <div class="vs0">&nbsp;</div>*@
         </div>
-    </form>
+
+
+    </div>
+    </div>
+</form>
 @*</div>*@
 <script src="~/js/Validation.js"></script>
+<script type="text/javascript">
+    debugger
+    var ApprovalStatus = document.getElementById("ApprovalStatus").value;
+    document.getElementById("UpdateStatus").value = ApprovalStatus;
+</script>

@@ -22,6 +22,9 @@ function indentStatusCheck(event) {
     else if (status == "") {
         document.getElementById('ApprovalSubmit').disabled = true;
     }
+    else if (status == document.getElementById("ApprovalStatus").value) {
+        document.getElementById('ApprovalSubmit').disabled = true;
+    }
     else {
         document.getElementById('ApprovalSubmit').disabled = false;
     }

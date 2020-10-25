@@ -22,6 +22,7 @@ namespace OrderManagementApproval.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         const string SessionUserID = "_UserId";
+        const string ApprovalStatusId = "_ApprovalStatusId";
 
         public HomeController(ILogger<HomeController> logger)
         {
@@ -50,7 +51,7 @@ namespace OrderManagementApproval.Controllers
                 {
                     // string query = "select Count(*) from [dbo].[UserMaster] where email= " + "'" + userName + "'" + " and   password = " + "'" + password + "'";
 
-                    string query = "select ApprovalId from IndentApproval where ApprovalID=  (select userid from UserMaster where email= " + "'" + userName + "'" + " and   password = " + "'" + password + "'" + ") and IndentID = " + indentNo;
+                    string query = "select ApprovalId, ApprovalStatusId from IndentApproval where ApprovalID=  (select userid from UserMaster where email= " + "'" + userName + "'" + " and   password = " + "'" + password + "'" + ") and IndentID = " + indentNo;
 
                     connection.Open();
                     SqlCommand testCMD = new SqlCommand(query, connection);
@@ -59,9 +60,11 @@ namespace OrderManagementApproval.Controllers
                     while (sdr.Read())
                     {
                         long userFound = Convert.ToInt64(sdr[0]);
+                        long AppStatusId = Convert.ToInt64(sdr[1]);
                         if (userFound != 0)
                         {
                             HttpContext.Session.SetString(SessionUserID, userFound.ToString());
+                            HttpContext.Session.SetString(ApprovalStatusId, AppStatusId.ToString());
                             isAuthenticated = true;
                         }
                     }
@@ -89,6 +92,8 @@ namespace OrderManagementApproval.Controllers
                 if (isAuthenticated)
                 {
                     List<ApprovalStatus> approvalStatusList = new List<ApprovalStatus>();
+                    long ApprovalStatusId = Convert.ToInt64(HttpContext.Session.GetString("_ApprovalStatusId"));
+                    string ApprovalStatus = "";
                     using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["SqlConnection"].ToString()))
                     {
                         connection.Open();
@@ -106,10 +111,15 @@ namespace OrderManagementApproval.Controllers
                             ApprovalStatus approvalStatus = new ApprovalStatus();
                             approvalStatus.Id = Convert.ToInt32(dataSet.Tables[0].Rows[counter]["ApprovalStatusID"]);
                             approvalStatus.Status = Convert.ToString(dataSet.Tables[0].Rows[counter]["ApprovalStatus"]);
+                            if(approvalStatus.Id== ApprovalStatusId)
+                            {
+                                ApprovalStatus = approvalStatus.Status;
+                            }
                             approvalStatusList.Add(approvalStatus);
                             counter++;
                         }
                     }
+                    ViewBag.ApprovalStatus = ApprovalStatus;
                     return View(approvalStatusList);
                 }
                 else
@@ -150,7 +160,7 @@ namespace OrderManagementApproval.Controllers
                     {
 
                         string query1 = "select email from Employee where EmployeeID = (select createdby from IndentApproval where indentid =" + indentNumber + ")";
-                    
+
                         SqlCommand testCMD1 = new SqlCommand(query1, connection);
                         string mailTo = "";
                         using (SqlDataReader dr = testCMD1.ExecuteReader())
@@ -162,7 +172,7 @@ namespace OrderManagementApproval.Controllers
                         }
                         if (mailTo != null)
                         {
-                            bool email = SendMail(Convert.ToInt64(indentNumber), status, mailTo);
+                            bool email = SendMail(Convert.ToInt64(indentNumber), status, mailTo, textArea);
                             if (email)
                             {
                                 ViewBag.Message = "Indent " + indentNumber + " is updated successfully to " + status;
@@ -172,7 +182,6 @@ namespace OrderManagementApproval.Controllers
                                 ViewBag.Message = "Indent " + indentNumber + " is not updated successfully.";
                             }
                         }
-
                     }
                     else
                     {
@@ -189,7 +198,7 @@ namespace OrderManagementApproval.Controllers
             }
         }
 
-        private bool SendMail(long indentNumber, string status, string mailTo)
+        private bool SendMail(long indentNumber, string status, string mailTo, string remarks)
         {
             bool mailSent = false;
             try
