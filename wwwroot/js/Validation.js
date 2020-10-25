@@ -1,5 +1,4 @@
 ﻿function userNamePasswordCheck(event) {
-    debugger;
     event.preventDefault();
     var userName = document.getElementById('UserName').value;
     var passWord = document.getElementById('Password').value;
@@ -13,7 +12,6 @@
 }
 
 function indentStatusCheck(event) {
-    debugger;
     var status = document.getElementById('UpdateStatus').value;
 
     if (status == 'Select Status') {
