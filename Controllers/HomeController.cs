@@ -5,6 +5,8 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
+using System.Net.Mail;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -140,13 +142,36 @@ namespace OrderManagementApproval.Controllers
 
                     //string query = "update IndentApproval set ApprovalStatusID = (select ApprovalStatusID from ApprovalStatus where ApprovalStatus = " + "'" + status + "'" + "), Remarks= " + "'" + textArea + "'" + " where IndentID = " + indentNumber;
 
-                    string query = "update IndentApproval set ApprovalStatusID = (select ApprovalStatusID from ApprovalStatus where ApprovalStatus = " + "'" + status + "'" + "), Remarks= " + "'" + textArea + "'" + " , ModifiedBy = " + "'" + ApprovalId+ "'" + " , ModifiedDate = " + "'" + DateTime.Now + "'" + " where IndentID = " + indentNumber;
+                    string query = "update IndentApproval set ApprovalStatusID = (select ApprovalStatusID from ApprovalStatus where ApprovalStatus = " + "'" + status + "'" + "), Remarks= " + "'" + textArea + "'" + " , ModifiedBy = " + "'" + ApprovalId + "'" + " , ModifiedDate = +  GETDATE()  where IndentID = " + indentNumber;
                     connection.Open();
                     SqlCommand testCMD = new SqlCommand(query, connection);
                     int a = testCMD.ExecuteNonQuery();
                     if (a != 0)
                     {
-                        ViewBag.Message = "Indent " + indentNumber + " is updated successfully to " + status;
+
+                        string query1 = "select email from Employee where EmployeeID = (select createdby from IndentApproval where indentid =" + indentNumber + ")";
+                    
+                        SqlCommand testCMD1 = new SqlCommand(query1, connection);
+                        string mailTo = "";
+                        using (SqlDataReader dr = testCMD1.ExecuteReader())
+                        {
+                            while (dr.Read())
+                            {
+                                mailTo = dr[0].ToString();
+                            }
+                        }
+                        if (mailTo != null)
+                        {
+                            bool email = SendMail(Convert.ToInt64(indentNumber), status, mailTo);
+                            if (email)
+                            {
+                                ViewBag.Message = "Indent " + indentNumber + " is updated successfully to " + status;
+                            }
+                            else
+                            {
+                                ViewBag.Message = "Indent " + indentNumber + " is not updated successfully.";
+                            }
+                        }
 
                     }
                     else
@@ -161,6 +186,47 @@ namespace OrderManagementApproval.Controllers
             {
                 ViewBag.Message = ex;
                 return View();
+            }
+        }
+
+        private bool SendMail(long indentNumber, string status, string mailTo)
+        {
+            bool mailSent = false;
+            try
+            {
+                string message = DateTime.Now + " In SendMail\n";
+
+                using (MailMessage mm = new MailMessage())
+                {
+                    mm.From = new MailAddress(Convert.ToString(ConfigurationManager.AppSettings["MailFrom"]));
+
+                    mm.To.Add(mailTo);
+
+                    mm.Subject = ConfigurationManager.AppSettings["Subject"];
+                    mm.Body = " Your Indent Number" + indentNumber + " has been " + status;
+                    mm.IsBodyHtml = false;
+
+                    SmtpClient smtp = new SmtpClient();
+                    smtp.Host = ConfigurationManager.AppSettings["Host"];
+                    smtp.EnableSsl = true;
+                    NetworkCredential NetworkCred = new NetworkCredential(ConfigurationManager.AppSettings["Username"],
+                        ConfigurationManager.AppSettings["Password"]);
+                    smtp.UseDefaultCredentials = true;
+                    smtp.Credentials = NetworkCred;
+                    smtp.Port = int.Parse(ConfigurationManager.AppSettings["Port"]);
+
+                    message = DateTime.Now + " Sending Mail\n";
+                    smtp.Send(mm);
+                    message = DateTime.Now + " Mail Sent\n";
+
+                    System.Threading.Thread.Sleep(3000);
+                    mailSent = true;
+                }
+                return mailSent;
+            }
+            catch (Exception ex)
+            {
+                return mailSent;
             }
         }
 
