@@ -165,7 +165,7 @@ namespace OrderManagementApproval.Controllers
                     testCMD.Parameters.Add(new SqlParameter("@IndentNumber", System.Data.SqlDbType.BigInt, 50) { Value = indentNumber });
                     testCMD.Parameters.Add(new SqlParameter("@Status", System.Data.SqlDbType.VarChar, 20) { Value = status });
                     testCMD.Parameters.Add(new SqlParameter("@Remarks", System.Data.SqlDbType.VarChar, 100) { Value = textArea });
-                    testCMD.Parameters.Add(new SqlParameter("@Next_Approver", System.Data.SqlDbType.VarChar, 50) { Value = approvalEmail.Next_Approver });
+                   // testCMD.Parameters.Add(new SqlParameter("@Next_Approver", System.Data.SqlDbType.VarChar, 50) { Value = approvalEmail.Next_Approver });
                     //testCMD.Parameters["@Next_Approver"].Direction = ParameterDirection.Output;
                     //testCMD.Parameters.Add(new SqlParameter("@Next_Approver_Name", System.Data.SqlDbType.VarChar, 50) { Value = approvalEmail.Next_Approver_Name });
                     //testCMD.Parameters["@Next_Approver_Name"].Direction = ParameterDirection.Output;
@@ -193,22 +193,32 @@ namespace OrderManagementApproval.Controllers
                     //approvalEmail.Approved_By_Name = testCMD.Parameters["@Approved_By_Name"].Value.ToString();
                     //approvalEmail.Approved_Status = testCMD.Parameters["@Approved_Status"].Value.ToString();
                     //approvalEmail.Remarks = testCMD.Parameters["@Remarks"].Value.ToString();
-                    approvalEmail.Next_Approver = approvalInfo.Tables[0].Rows[0]["Next_Approver"].ToString();
-                    approvalEmail.Next_Approver_Name = approvalInfo.Tables[0].Rows[0]["Next_Approver_Name"].ToString();
-                    approvalEmail.Raised_By = approvalInfo.Tables[0].Rows[0]["Raised_By"].ToString();
-                    approvalEmail.Raised_By_Name = approvalInfo.Tables[0].Rows[0]["Raised_By_Name"].ToString();
-                    approvalEmail.Approved_By = approvalInfo.Tables[0].Rows[0]["Approved_By"].ToString();
-                    approvalEmail.Approved_By_Name = approvalInfo.Tables[0].Rows[0]["Approved_By_Name"].ToString();
-                    approvalEmail.Approved_Status = approvalInfo.Tables[0].Rows[0]["Approval_Status"].ToString();
-                    approvalEmail.Remarks = approvalInfo.Tables[0].Rows[0]["Remarks"].ToString();
-                    if (approvalEmail.Remarks == null || approvalEmail.Remarks == "")
+                    if (approvalInfo.Tables != null)
                     {
-                        ViewBag.Message = "Indent " + indentNumber + " is updated successfully to " + status;
-                    }
+                        if (approvalInfo.Tables[0].Rows.Count > 0)
+                        {
+                            approvalEmail.Next_Approver = approvalInfo.Tables[0].Rows[0]["Next_Approver"].ToString();
+                            approvalEmail.Next_Approver_Name = approvalInfo.Tables[0].Rows[0]["Next_Approver_Name"].ToString();
+                            approvalEmail.Raised_By = approvalInfo.Tables[0].Rows[0]["Raised_By"].ToString();
+                            approvalEmail.Raised_By_Name = approvalInfo.Tables[0].Rows[0]["Raised_By_Name"].ToString();
+                            approvalEmail.Approved_By = approvalInfo.Tables[0].Rows[0]["Approved_By"].ToString();
+                            approvalEmail.Approved_By_Name = approvalInfo.Tables[0].Rows[0]["Approved_By_Name"].ToString();
+                            approvalEmail.Approved_Status = approvalInfo.Tables[0].Rows[0]["Approval_Status"].ToString();
+                            approvalEmail.Remarks = approvalInfo.Tables[0].Rows[0]["Remarks"].ToString();
+                            if (approvalEmail.Remarks == null || approvalEmail.Remarks == "")
+                            {
+                                ViewBag.Message = "Indent " + indentNumber + " is updated successfully to " + status;
+                            }
 
-                    else
-                    {
-                        ViewBag.Message = "Indent " + indentNumber + " is updated successfully to " + status + "With Remarks" + approvalEmail.Remarks;
+                            else
+                            {
+                                ViewBag.Message = "Indent " + indentNumber + " is updated successfully to " + status + "With Remarks" + approvalEmail.Remarks;
+                            }
+                        }
+                        else
+                        {
+                            ViewBag.Message = "Indent " + indentNumber + " is either already approved/denied or not available in the system. Please contact the administrator.";
+                        }
                     }
                     SendMail(Convert.ToInt64(indentNumber));
                     //int a = testCMD.ExecuteNonQuery();
