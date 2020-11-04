@@ -166,33 +166,41 @@ namespace OrderManagementApproval.Controllers
                     testCMD.Parameters.Add(new SqlParameter("@Status", System.Data.SqlDbType.VarChar, 20) { Value = status });
                     testCMD.Parameters.Add(new SqlParameter("@Remarks", System.Data.SqlDbType.VarChar, 100) { Value = textArea });
                     testCMD.Parameters.Add(new SqlParameter("@Next_Approver", System.Data.SqlDbType.VarChar, 50) { Value = approvalEmail.Next_Approver });
-                    testCMD.Parameters["@Next_Approver"].Direction = ParameterDirection.Output;
-                    testCMD.Parameters.Add(new SqlParameter("@Next_Approver_Name", System.Data.SqlDbType.VarChar, 50) { Value = approvalEmail.Next_Approver_Name });
-                    testCMD.Parameters["@Next_Approver_Name"].Direction = ParameterDirection.Output;
-                    testCMD.Parameters.Add(new SqlParameter("@Raised_By", System.Data.SqlDbType.VarChar, 50) { Value = approvalEmail.Raised_By });
-                    testCMD.Parameters["@Raised_By"].Direction = ParameterDirection.Output;
-                    testCMD.Parameters.Add(new SqlParameter("@Raised_By_Name", System.Data.SqlDbType.VarChar, 50) { Value = approvalEmail.Raised_By_Name });
-                    testCMD.Parameters["@Raised_By_Name"].Direction = ParameterDirection.Output;
-                    testCMD.Parameters.Add(new SqlParameter("@Approved_By", System.Data.SqlDbType.VarChar, 50) { Value = approvalEmail.Approved_By });
-                    testCMD.Parameters["@Approved_By"].Direction = ParameterDirection.Output;
-                    testCMD.Parameters.Add(new SqlParameter("@Approved_By_Name", System.Data.SqlDbType.VarChar, 50) { Value = approvalEmail.Approved_By_Name });
-                    testCMD.Parameters["@Approved_By_Name"].Direction = ParameterDirection.Output;
-                    testCMD.Parameters.Add(new SqlParameter("@Approved_Status", System.Data.SqlDbType.VarChar, 50) { Value = approvalEmail.Approved_Status });
-                    testCMD.Parameters["@Approved_Status"].Direction = ParameterDirection.Output;
-                    testCMD.Parameters.Add(new SqlParameter("@Remarks", System.Data.SqlDbType.VarChar, 50) { Value = approvalEmail.Remarks });
-                    testCMD.Parameters["@Remarks"].Direction = ParameterDirection.Output;
+                    //testCMD.Parameters["@Next_Approver"].Direction = ParameterDirection.Output;
+                    //testCMD.Parameters.Add(new SqlParameter("@Next_Approver_Name", System.Data.SqlDbType.VarChar, 50) { Value = approvalEmail.Next_Approver_Name });
+                    //testCMD.Parameters["@Next_Approver_Name"].Direction = ParameterDirection.Output;
+                    //testCMD.Parameters.Add(new SqlParameter("@Raised_By", System.Data.SqlDbType.VarChar, 50) { Value = approvalEmail.Raised_By });
+                    //testCMD.Parameters["@Raised_By"].Direction = ParameterDirection.Output;
+                    //testCMD.Parameters.Add(new SqlParameter("@Raised_By_Name", System.Data.SqlDbType.VarChar, 50) { Value = approvalEmail.Raised_By_Name });
+                    //testCMD.Parameters["@Raised_By_Name"].Direction = ParameterDirection.Output;
+                    //testCMD.Parameters.Add(new SqlParameter("@Approved_By", System.Data.SqlDbType.VarChar, 50) { Value = approvalEmail.Approved_By });
+                    //testCMD.Parameters["@Approved_By"].Direction = ParameterDirection.Output;
+                    //testCMD.Parameters.Add(new SqlParameter("@Approved_By_Name", System.Data.SqlDbType.VarChar, 50) { Value = approvalEmail.Approved_By_Name });
+                    //testCMD.Parameters["@Approved_By_Name"].Direction = ParameterDirection.Output;
+                    //testCMD.Parameters.Add(new SqlParameter("@Approved_Status", System.Data.SqlDbType.VarChar, 50) { Value = approvalEmail.Approved_Status });
+                    //testCMD.Parameters["@Approved_Status"].Direction = ParameterDirection.Output;
+                    //testCMD.Parameters.Add(new SqlParameter("@Remarks", System.Data.SqlDbType.VarChar, 50) { Value = approvalEmail.Remarks });
+                    //testCMD.Parameters["@Remarks"].Direction = ParameterDirection.Output;
+                    SqlDataAdapter approvalDA = new SqlDataAdapter(testCMD);
+                    DataSet approvalInfo = new DataSet();
+                    approvalDA.Fill(approvalInfo);
 
-                    testCMD.ExecuteNonQuery(); // read output value from @NewId 
-
-                    approvalEmail.Next_Approver = testCMD.Parameters["@Next_Approver"].Value.ToString();
-                    approvalEmail.Next_Approver_Name = testCMD.Parameters["@Next_Approver_Name"].Value.ToString();
-                    approvalEmail.Raised_By = testCMD.Parameters["@Raised_By"].Value.ToString();
-                    approvalEmail.Raised_By_Name = testCMD.Parameters["@Raised_By_Name"].Value.ToString();
-                    approvalEmail.Approved_By = testCMD.Parameters["@Approved_By"].Value.ToString();
-                    approvalEmail.Approved_By_Name = testCMD.Parameters["@Approved_By_Name"].Value.ToString();
-                    approvalEmail.Approved_Status = testCMD.Parameters["@Approved_Status"].Value.ToString();
-                    approvalEmail.Remarks = testCMD.Parameters["@Remarks"].Value.ToString();
-
+                    //approvalEmail.Next_Approver = testCMD.Parameters["@Next_Approver"].Value.ToString();
+                    //approvalEmail.Next_Approver_Name = testCMD.Parameters["@Next_Approver_Name"].Value.ToString();
+                    //approvalEmail.Raised_By = testCMD.Parameters["@Raised_By"].Value.ToString();
+                    //approvalEmail.Raised_By_Name = testCMD.Parameters["@Raised_By_Name"].Value.ToString();
+                    //approvalEmail.Approved_By = testCMD.Parameters["@Approved_By"].Value.ToString();
+                    //approvalEmail.Approved_By_Name = testCMD.Parameters["@Approved_By_Name"].Value.ToString();
+                    //approvalEmail.Approved_Status = testCMD.Parameters["@Approved_Status"].Value.ToString();
+                    //approvalEmail.Remarks = testCMD.Parameters["@Remarks"].Value.ToString();
+                    approvalEmail.Next_Approver = approvalInfo.Tables[0].Rows[0]["Next_Approver"].ToString();
+                    approvalEmail.Next_Approver_Name = approvalInfo.Tables[0].Rows[0]["Next_Approver_Name"].ToString();
+                    approvalEmail.Raised_By = approvalInfo.Tables[0].Rows[0]["Raised_By"].ToString();
+                    approvalEmail.Raised_By_Name = approvalInfo.Tables[0].Rows[0]["Raised_By_Name"].ToString();
+                    approvalEmail.Approved_By = approvalInfo.Tables[0].Rows[0]["Approved_By"].ToString();
+                    approvalEmail.Approved_By_Name = approvalInfo.Tables[0].Rows[0]["Approved_By_Name"].ToString();
+                    approvalEmail.Approved_Status = approvalInfo.Tables[0].Rows[0]["Approval_Status"].ToString();
+                    approvalEmail.Remarks = approvalInfo.Tables[0].Rows[0]["Remarks"].ToString();
                     if (approvalEmail.Remarks == null || approvalEmail.Remarks == "")
                     {
                         ViewBag.Message = "Indent " + indentNumber + " is updated successfully to " + status;
