@@ -96,7 +96,7 @@ namespace OrderManagementApproval.Controllers
                 bool isAuthenticated = LogInCheck(userName, password, indentNo);
                 if (isAuthenticated)
                 {
-                    List<ApprovalStatus> approvalStatusList = new List<ApprovalStatus>();
+                    List<ModelApprovalStatus> approvalStatusList = new List<ModelApprovalStatus>();
                     long ApprovalStatusId = Convert.ToInt64(HttpContext.Session.GetString("_ApprovalStatusId"));
                     string ApprovalStatus = "";
                     using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["SqlConnection"].ToString()))
@@ -113,7 +113,7 @@ namespace OrderManagementApproval.Controllers
 
                         while (counter < dataSet.Tables[0].Rows.Count)
                         {
-                            ApprovalStatus approvalStatus = new ApprovalStatus();
+                            ModelApprovalStatus approvalStatus = new ModelApprovalStatus();
                             approvalStatus.Id = Convert.ToInt32(dataSet.Tables[0].Rows[counter]["ApprovalStatusID"]);
                             approvalStatus.Status = Convert.ToString(dataSet.Tables[0].Rows[counter]["ApprovalStatus"]);
                             if (approvalStatus.Id == ApprovalStatusId)
@@ -150,7 +150,7 @@ namespace OrderManagementApproval.Controllers
             string textArea = updateStatus["TextArea"];
             try
             {
-                List<ApprovalStatus> approvalStatusList = new List<ApprovalStatus>();
+                List<ModelApprovalStatus> approvalStatusList = new List<ModelApprovalStatus>();
                 using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["SqlConnection"].ToString()))
                 {
                     long ApprovalId = Convert.ToInt64(HttpContext.Session.GetString(SessionUserID));

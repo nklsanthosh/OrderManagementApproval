@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace OrderManagementApproval.Models
 {
-    public class ApprovalStatus
+    public class ModelApprovalStatus
     {
         public int Id { get; set; }
         public string Status { get; set; }
