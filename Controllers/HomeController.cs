@@ -28,6 +28,8 @@ namespace OrderManagementApproval.Controllers
         //private string remarks = "";
         //private string approvedBy = "";
         ApprovalEmail approvalEmail = new ApprovalEmail();
+        private string ApproverName = "";
+        private string CreatedEmail = "";
 
         public HomeController(ILogger<HomeController> logger)
         {
@@ -150,112 +152,43 @@ namespace OrderManagementApproval.Controllers
             string textArea = updateStatus["TextArea"];
             try
             {
-                List<ModelApprovalStatus> approvalStatusList = new List<ModelApprovalStatus>();
+                //List<ModelApprovalStatus> approvalStatusList = new List<ModelApprovalStatus>();
                 using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["SqlConnection"].ToString()))
                 {
                     long ApprovalId = Convert.ToInt64(HttpContext.Session.GetString(SessionUserID));
 
-                    //string query = "update IndentApproval set ApprovalStatusID = (select ApprovalStatusID from ApprovalStatus where ApprovalStatus = " + "'" + status + "'" + "), Remarks= " + "'" + textArea + "'" + " where IndentID = " + indentNumber;
-
-                    //string query = "update IndentApproval set ApprovalStatusID = (select ApprovalStatusID from ApprovalStatus where ApprovalStatus = " + "'" + status + "'" + "), Remarks= " + "'" + textArea + "'" + " , ModifiedBy = " + "'" + ApprovalId + "'" + " , ModifiedDate = +  GETDATE()  where IndentID = " + indentNumber;
                     connection.Open();
-                    SqlCommand testCMD = new SqlCommand("SetApprovalStatus", connection);
+                    SqlCommand testCMD = new SqlCommand("IndentApprovalStatus", connection);
                     testCMD.CommandType = CommandType.StoredProcedure;
 
                     testCMD.Parameters.Add(new SqlParameter("@IndentNumber", System.Data.SqlDbType.BigInt, 50) { Value = indentNumber });
+                    testCMD.Parameters.Add(new SqlParameter("@ApproverId", System.Data.SqlDbType.BigInt, 50) { Value = ApprovalId });
                     testCMD.Parameters.Add(new SqlParameter("@Status", System.Data.SqlDbType.VarChar, 20) { Value = status });
                     testCMD.Parameters.Add(new SqlParameter("@Remarks", System.Data.SqlDbType.VarChar, 100) { Value = textArea });
-                    // testCMD.Parameters.Add(new SqlParameter("@Next_Approver", System.Data.SqlDbType.VarChar, 50) { Value = approvalEmail.Next_Approver });
-                    //testCMD.Parameters["@Next_Approver"].Direction = ParameterDirection.Output;
-                    //testCMD.Parameters.Add(new SqlParameter("@Next_Approver_Name", System.Data.SqlDbType.VarChar, 50) { Value = approvalEmail.Next_Approver_Name });
-                    //testCMD.Parameters["@Next_Approver_Name"].Direction = ParameterDirection.Output;
-                    //testCMD.Parameters.Add(new SqlParameter("@Raised_By", System.Data.SqlDbType.VarChar, 50) { Value = approvalEmail.Raised_By });
-                    //testCMD.Parameters["@Raised_By"].Direction = ParameterDirection.Output;
-                    //testCMD.Parameters.Add(new SqlParameter("@Raised_By_Name", System.Data.SqlDbType.VarChar, 50) { Value = approvalEmail.Raised_By_Name });
-                    //testCMD.Parameters["@Raised_By_Name"].Direction = ParameterDirection.Output;
-                    //testCMD.Parameters.Add(new SqlParameter("@Approved_By", System.Data.SqlDbType.VarChar, 50) { Value = approvalEmail.Approved_By });
-                    //testCMD.Parameters["@Approved_By"].Direction = ParameterDirection.Output;
-                    //testCMD.Parameters.Add(new SqlParameter("@Approved_By_Name", System.Data.SqlDbType.VarChar, 50) { Value = approvalEmail.Approved_By_Name });
-                    //testCMD.Parameters["@Approved_By_Name"].Direction = ParameterDirection.Output;
-                    //testCMD.Parameters.Add(new SqlParameter("@Approved_Status", System.Data.SqlDbType.VarChar, 50) { Value = approvalEmail.Approved_Status });
-                    //testCMD.Parameters["@Approved_Status"].Direction = ParameterDirection.Output;
-                    //testCMD.Parameters.Add(new SqlParameter("@Remarks", System.Data.SqlDbType.VarChar, 50) { Value = approvalEmail.Remarks });
-                    //testCMD.Parameters["@Remarks"].Direction = ParameterDirection.Output;
+
                     SqlDataAdapter approvalDA = new SqlDataAdapter(testCMD);
                     DataSet approvalInfo = new DataSet();
                     approvalDA.Fill(approvalInfo);
 
-                    //approvalEmail.Next_Approver = testCMD.Parameters["@Next_Approver"].Value.ToString();
-                    //approvalEmail.Next_Approver_Name = testCMD.Parameters["@Next_Approver_Name"].Value.ToString();
-                    //approvalEmail.Raised_By = testCMD.Parameters["@Raised_By"].Value.ToString();
-                    //approvalEmail.Raised_By_Name = testCMD.Parameters["@Raised_By_Name"].Value.ToString();
-                    //approvalEmail.Approved_By = testCMD.Parameters["@Approved_By"].Value.ToString();
-                    //approvalEmail.Approved_By_Name = testCMD.Parameters["@Approved_By_Name"].Value.ToString();
-                    //approvalEmail.Approved_Status = testCMD.Parameters["@Approved_Status"].Value.ToString();
-                    //approvalEmail.Remarks = testCMD.Parameters["@Remarks"].Value.ToString();
-                    if (approvalInfo.Tables != null)
+                    if (approvalInfo.Tables[0].Rows.Count > 0)
                     {
-                        if (approvalInfo.Tables[0].Rows.Count > 0)
-                        {
-                            approvalEmail.Next_Approver = approvalInfo.Tables[0].Rows[0]["Next_Approver"].ToString();
-                            approvalEmail.Next_Approver_Name = approvalInfo.Tables[0].Rows[0]["Next_Approver_Name"].ToString();
-                            approvalEmail.Raised_By = approvalInfo.Tables[0].Rows[0]["Raised_By"].ToString();
-                            approvalEmail.Raised_By_Name = approvalInfo.Tables[0].Rows[0]["Raised_By_Name"].ToString();
-                            approvalEmail.Approved_By = approvalInfo.Tables[0].Rows[0]["Approved_By"].ToString();
-                            approvalEmail.Approved_By_Name = approvalInfo.Tables[0].Rows[0]["Approved_By_Name"].ToString();
-                            approvalEmail.Approved_Status = approvalInfo.Tables[0].Rows[0]["Approval_Status"].ToString();
-                            approvalEmail.Remarks = approvalInfo.Tables[0].Rows[0]["Remarks"].ToString();
-                            if (approvalEmail.Remarks == null || approvalEmail.Remarks == "")
-                            {
-                                ViewBag.Message = "Indent " + indentNumber + " is updated successfully to " + status;
-                            }
-
-                            else
-                            {
-                                ViewBag.Message = "Indent " + indentNumber + " is updated successfully to " + status + "With Remarks" + approvalEmail.Remarks;
-                            }
-                        }
-                        else
-                        {
-                            ViewBag.Message = "Indent " + indentNumber + " is either already approved/denied or not available in the system. Please contact the administrator.";
-                        }
+                        ApproverName = approvalInfo.Tables[0].Rows[0]["ApproverName"].ToString();
+                        CreatedEmail = approvalInfo.Tables[0].Rows[0]["CreatedEmail"].ToString();
                     }
-                    SendMail(Convert.ToInt64(indentNumber));
-                    //int a = testCMD.ExecuteNonQuery();
-                    //if (a != 0)
-                    //{
+                    if (textArea == null || textArea == "")
+                    {
+                        ViewBag.Message = "Indent " + indentNumber + " is updated successfully to " + status + " by " + ApproverName;
+                    }
 
-                    //    string query1 = "select email from Employee where EmployeeID = (select createdby from IndentApproval where indentid =" + indentNumber + ")";
+                    else
+                    {
+                        ViewBag.Message = "Indent " + indentNumber + " is updated successfully to " + status + "With Remarks" + textArea + " by " + ApproverName;
+                    }
 
-                    //    SqlCommand testCMD1 = new SqlCommand(query1, connection);
-                    //    string mailTo = "";
-                    //    using (SqlDataReader dr = testCMD1.ExecuteReader())
-                    //    {
-                    //        while (dr.Read())
-                    //        {
-                    //            mailTo = dr[0].ToString();
-                    //        }
-                    //    }
-                    //    if (mailTo != null)
-                    //    {
-                    //        bool email = SendMail(Convert.ToInt64(indentNumber), status, mailTo, textArea);
-                    //        if (email)
-                    //        {
-                    //            ViewBag.Message = "Indent " + indentNumber + " is updated successfully to " + status;
-                    //        }
-                    //        else
-                    //        {
-                    //            ViewBag.Message = "Indent " + indentNumber + " is not updated successfully.";
-                    //        }
-                    //    }
-                    //}
-                    //else
-                    //{
-                    //    ViewBag.Message = "Indent " + indentNumber + " is not updated successfully.";
-                    //}
+                    SendMail(Convert.ToInt64(indentNumber), status, textArea, ApproverName);
+
                     return View();
                 }
-
             }
             catch (Exception ex)
             {
@@ -264,7 +197,7 @@ namespace OrderManagementApproval.Controllers
             }
         }
 
-        private bool SendMail(long indentNumber)
+        private bool SendMail(long indentNumber, string status, string textArea, string ApproverName)
         {
             bool mailSent = false;
             try
@@ -274,23 +207,17 @@ namespace OrderManagementApproval.Controllers
                 using (MailMessage mm = new MailMessage())
                 {
                     mm.From = new MailAddress(Convert.ToString(ConfigurationManager.AppSettings["MailFrom"]));
-                    mm.To.Add(approvalEmail.Raised_By);
+                    mm.To.Add(CreatedEmail);
                     mm.Subject = "Indent Number - " + indentNumber;
-                    if (approvalEmail.Remarks != null)
+
+                    if (textArea == null || textArea == "")
                     {
-                        //if (approvalEmail.Next_Approver == "" || approvalEmail.Next_Approver == null)
-                        //{
-                        //    mm.Body = " Your Indent Number" + indentNumber + " is " + approvalEmail.Approved_Status + " by " + approvalEmail.Approved_By_Name;
-                        //}
-                        //else
-                        //{
-                        //    mm.Body = " Your Indent Number" + indentNumber + " is Approved by " + approvalEmail.Approved_By_Name + ". And " + approvalEmail.Approved_Status + " with " + approvalEmail.Next_Approver_Name;
-                        //}
-                        mm.Body = " Your Indent Number" + indentNumber + " is " + approvalEmail.Approved_Status + " by " + approvalEmail.Approved_By_Name;
+                        mm.Body = " Your Indent Number" + indentNumber + " is " + status + " by " + ApproverName;
                     }
+
                     else
                     {
-                        mm.Body = " Your Indent Number" + indentNumber + " is " + approvalEmail.Approved_Status + " by " + approvalEmail.Approved_By_Name + " with Remarks: " + approvalEmail.Remarks;
+                        mm.Body = " Your Indent Number" + indentNumber + " is " + status + " by " + ApproverName + " with Remarks: " + textArea;
                     }
 
                     mm.IsBodyHtml = false;
@@ -310,35 +237,8 @@ namespace OrderManagementApproval.Controllers
 
                     System.Threading.Thread.Sleep(3000);
                     mailSent = true;
+                    return mailSent;
                 }
-                //if (approvalEmail.Approved_Status != "Awaiting Approval")
-                //{
-                //    using (MailMessage mm = new MailMessage())
-                //    {
-                //        mm.From = new MailAddress(Convert.ToString(ConfigurationManager.AppSettings["MailFrom"]));
-                //        mm.To.Add(approvalEmail.Next_Approver);
-                //        mm.Subject = ConfigurationManager.AppSettings["Subject"];
-                //        mm.Body = "Indent Number" + indentNumber + " has been generated by " + approvalEmail.Raised_By_Name + ". Please click on the link to approve or deny the indent. http://106.51.136.135:8080/" + indentNumber;
-                //        mm.IsBodyHtml = false;
-
-                //        SmtpClient smtp = new SmtpClient();
-                //        smtp.Host = ConfigurationManager.AppSettings["Host"];
-                //        smtp.EnableSsl = true;
-                //        NetworkCredential NetworkCred = new NetworkCredential(ConfigurationManager.AppSettings["Username"],
-                //            ConfigurationManager.AppSettings["Password"]);
-                //        smtp.UseDefaultCredentials = true;
-                //        smtp.Credentials = NetworkCred;
-                //        smtp.Port = int.Parse(ConfigurationManager.AppSettings["Port"]);
-
-                //        message = DateTime.Now + " Sending Mail\n";
-                //        smtp.Send(mm);
-                //        message = DateTime.Now + " Mail Sent\n";
-
-                //        System.Threading.Thread.Sleep(3000);
-                //        mailSent = true;
-                //    }
-                //}
-                return mailSent;
             }
             catch (Exception ex)
             {

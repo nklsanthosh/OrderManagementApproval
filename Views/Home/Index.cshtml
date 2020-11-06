@@ -41,6 +41,11 @@
                                 </div><br /><br />
                                 <div class="inner-addon left-addon">
                                     <!--<label for="UserName">User Name</label>-->
+                                    <input id="IndentNo" name="IndentNo" type="number" class="textbox username" placeholder="Enter IndentNumber" value="@ViewBag.IndentNo" />
+                                </div>
+                                <div class="vs10">&nbsp;</div>
+                                <div class="inner-addon left-addon">
+                                    <!--<label for="UserName">User Name</label>-->
                                     <input id="UserName" name="UserName" type="text" value="" class="textbox username" placeholder="Enter Username" onkeyup="userNamePasswordCheck(event)" />
                                 </div>
                                 <div class="vs10">&nbsp;</div>
@@ -49,7 +54,7 @@
                                     <!--<label for="Password">Password</label>-->
                                     <input id="Password" name="Password" type="password" value="" class="textbox password" placeholder="Enter Password" icon="/images/icon_password.jpg" onkeyup="userNamePasswordCheck(event)" />
                                     @*<input type="password" class="form-control" placeholder="Password" />*@
-                                    <input type="hidden" name="IndentNo" value="@ViewBag.IndentNo" />
+                                    @*<input type="hidden" name="IndentNo" value="@ViewBag.IndentNo" />*@
                                 </div>
                                 <div class="vs5">&nbsp;</div>
                                 <div class="row">
