@@ -76,24 +76,54 @@
                                         <input type="submit" class="button buttonsubmit" value="Submit" id="ApprovalSubmit" disabled />
                                     </div>*@
                             </div>
+                            <div id="indentDetails">
+                            </div>
                         </div>
-                    </div>
                 </section>
+
+
             </div>
-
-            @*<div class="content-right">
-                    <img src="~/Content/images/loginright.png">
-                </div>
-                <div class="vs0">&nbsp;</div>*@
         </div>
-
-
+        @*<partial name="RenderMenu.cshtml" />*@
+        @*<div class="content-right">
+                <img src="~/Content/images/loginright.png">
+            </div>
+            <div class="vs0">&nbsp;</div>*@
     </div>
     </div>
 </form>
 @*</div>*@
 <script src="~/js/Validation.js"></script>
+<script src="~/lib/jquery/dist/jquery.js"></script>
 <script type="text/javascript">
     var ApprovalStatus = document.getElementById("ApprovalStatus").value;
     document.getElementById("UpdateStatus").value = ApprovalStatus;
+
+    $(document).ready(function () {
+        GetIndentDetails();
+    });
+    function GetIndentDetails() {
+        $.get('/Home/GetIndentDetails', {}, function (data) {
+            debugger;
+            var tblEmployee = $("#indentDetails");
+            var tr = "<html> <head> <style>.tableborder{border:1px; border-style:solid; border.color:red;}.tdDist{width: 100%;}</style> </head> <body> <table width='60%' border=1 border-style='solid' border-color='#8CBD48'> <tr> <td colspan=9 style='background-color:#EBF8F0;color:#6C6C6C;font-family:Verdana; vertical-align:middle'><h2><i><center>SLPP RENEW LLP<center></i></h2></td></tr><tr> <td colspan=9 style='background-color:#EBF8F0;color:#6C6C6C;font-family:Verdana;vertical-align:middle'><h2><center><i><u>MATERIAL INDENT FORM</u></i></center></h2></td></tr><tr> <td colspan=7 style='background-color:#EBF8F0;color:#6C6C6C;font-family:Verdana;'><i>Related WBS No: </i></td><td style='background-color:#EBF8F0;color:#6C6C6C;font-family:Verdana;'><i>Indent No :</td><td style='background-color:#EBF8F0;color:#6C6C6C;font-family:Verdana;'>";
+            tr = tr + "<i>" + data.IndentNo + "</i>";
+            tr = tr + " " + ("</td></tr><tr> <td colspan=7 style='background-color:#EBF8F0;color:#6C6C6C;font-family:Verdana;'><i>Approved By: </i></td><td style='background-color:#EBF8F0;color:#6C6C6C;font-family:Verdana;'><i>Approved On :</td><td style='background-color:#EBF8F0;color:#6C6C6C;font-family:Verdana;'><i></i></td></tr></table> <table width='60%' border=1 border-style='solid' border-color='#8CBD48'> <tr style='background-color:#609F19;color:#FFFFFF;font-family:Verdana;font-size:11;vertical-align:middle'><td>Item Code</td><td>Item Category Name</td><td>Item Name</td><td>Technical Specifications</td><td>Units</td><td>Quantity</td><td>Remarks</td></tr>")
+            $.each(data.gridIndents, function (i, val) {
+                tr = tr + " " + "<tr>";
+                tr = tr + " " + ("<td>" + val.slNo + "</td>");
+                tr = tr + " " + ("<td>" + val.itemCategoryName + "</td>");
+                tr = tr + " " + ("<td>" + val.itemCo + "</td>");
+                tr = tr + " " + ("<td>" + val.itemName + "</td>");
+                tr = tr + " " + ("<td>" + val.technical_Specifications + "</td>");
+                tr = tr + " " + ("<td>" + val.quantity + "</td>");
+                tr = tr + " " + ("<td>" + val.units + "</td>");
+                tr = tr + " " + ("<td>" + val.remarks + "</td>");
+                tr = tr + " " + "</td>";
+            })
+            tr = tr + " " + (" </tr><tr> <td colspan=7 style='background-color:#EBF8F0;color:#6C6C6C;font-family:Verdana;font-size:11;vertical-align:middle'><i>Revision Remarks: </i></td></tr><tr> <td colspan=7 style='background-color:#EBF8F0;color:#6C6C6C;font-family:Verdana;font-size:11;vertical-align:middle'><i>1. </i></td></tr><tr> <td colspan=7 style='background-color:#EBF8F0;color:#6C6C6C;font-family:Verdana;font-size:11;vertical-align:middle'><i>2. </i></td></tr></table></body></html>")
+            $("#indentDetails").append(tr);
+        });
+    };
+
 </script>

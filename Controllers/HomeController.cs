@@ -23,13 +23,10 @@ namespace OrderManagementApproval.Controllers
         private readonly ILogger<HomeController> _logger;
         const string SessionUserID = "_UserId";
         const string ApprovalStatusId = "_ApprovalStatusId";
-        //private string emailTo = "";
-        //private string emailApprovalTo = "";
-        //private string remarks = "";
-        //private string approvedBy = "";
         ApprovalEmail approvalEmail = new ApprovalEmail();
         private string ApproverName = "";
         private string CreatedEmail = "";
+        private long indentNo;
 
         public HomeController(ILogger<HomeController> logger)
         {
@@ -57,18 +54,23 @@ namespace OrderManagementApproval.Controllers
                 using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["SqlConnection"].ToString()))
                 {
                     // string query = "select Count(*) from [dbo].[UserMaster] where email= " + "'" + userName + "'" + " and   password = " + "'" + password + "'";
-
-                    string query = "select ApprovalId, ApprovalStatusId from IndentApproval where ApprovalID=  (select userid from UserMaster where email= " + "'" + userName + "'" + " and   password = " + "'" + password + "'" + ") and IndentID = " + indentNo;
-
                     connection.Open();
-                    SqlCommand testCMD = new SqlCommand(query, connection);
-                    SqlDataReader sdr = testCMD.ExecuteReader();
+                    SqlCommand testCMD = new SqlCommand("indent_approval_check", connection);
+                    testCMD.CommandType = CommandType.StoredProcedure;
 
-                    while (sdr.Read())
+                    testCMD.Parameters.Add(new SqlParameter("@IndentNo", System.Data.SqlDbType.BigInt, 50) { Value = indentNo });
+                    testCMD.Parameters.Add(new SqlParameter("@Email", System.Data.SqlDbType.VarChar, 50) { Value = userName });
+                    testCMD.Parameters.Add(new SqlParameter("@Password", System.Data.SqlDbType.VarChar, 50) { Value = password });
+
+                    SqlDataAdapter approvalDA = new SqlDataAdapter(testCMD);
+                    DataSet approvalInfo = new DataSet();
+                    approvalDA.Fill(approvalInfo);
+
+                    if (approvalInfo.Tables[0].Rows.Count > 0)
                     {
-                        long userFound = Convert.ToInt64(sdr[0]);
-                        long AppStatusId = Convert.ToInt64(sdr[1]);
-                        if (userFound != 0)
+                        long userFound = Convert.ToInt64(approvalInfo.Tables[0].Rows[0]["ApproverId"]);
+                        long AppStatusId = Convert.ToInt64(approvalInfo.Tables[0].Rows[0]["ApprovalStatusId"]);
+                        if (AppStatusId != 0)
                         {
                             HttpContext.Session.SetString(SessionUserID, userFound.ToString());
                             HttpContext.Session.SetString(ApprovalStatusId, AppStatusId.ToString());
@@ -85,12 +87,82 @@ namespace OrderManagementApproval.Controllers
             return isAuthenticated;
         }
 
+
+        public IActionResult RenderMenu()
+        {
+            SaveIndent saveIndent = new SaveIndent();
+            ViewBag.IndentNo = indentNo;
+            return PartialView("_MenuBar", saveIndent.GridIndents);
+        }
+
+        public SaveIndent GetIndentDetails()
+        {
+            SaveIndent saveIndent = GetIndent(indentNo);
+            return saveIndent;
+        }
+
+        private SaveIndent GetIndent(long indentNo)
+        {
+            SaveIndent saveIndent = new SaveIndent();
+            long ApprovalId = Convert.ToInt64(HttpContext.Session.GetString(SessionUserID));
+            try
+            {
+                List<GridIndent> gridIndents = new List<GridIndent>();
+              
+                using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["SqlConnection"].ToString()))
+                {
+                    connection.Open();
+                    SqlCommand testCMD = new SqlCommand("GetIndent", connection);
+                    testCMD.CommandType = CommandType.StoredProcedure;
+                    testCMD.Parameters.Add(new SqlParameter("@IndentID", System.Data.SqlDbType.BigInt, 50) { Value = indentNo });
+                    testCMD.Parameters.Add(new SqlParameter("@UserID", System.Data.SqlDbType.VarChar, 300) { Value = ApprovalId });
+                    SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(testCMD);
+
+                    DataSet dataSet = new DataSet();
+                    sqlDataAdapter.Fill(dataSet);
+                    int counter = 0;
+                    while (counter < dataSet.Tables[0].Rows.Count)
+                    {
+                        saveIndent.Date = Convert.ToDateTime(dataSet.Tables[0].Rows[counter]["Date"]);
+                        saveIndent.LocationCode = Convert.ToInt64(dataSet.Tables[0].Rows[counter]["LocationCode"]);
+                        saveIndent.IndentRemarks = Convert.ToString(dataSet.Tables[0].Rows[counter]["Remarks"]);
+                        saveIndent.ApproverName = Convert.ToString(dataSet.Tables[0].Rows[counter]["Approver"]);
+                        saveIndent.ApprovalID = Convert.ToInt64(dataSet.Tables[0].Rows[counter]["Approver ID"]);
+                        saveIndent.ApprovalStatus = Convert.ToString(dataSet.Tables[0].Rows[counter]["ApprovalStatus"]);
+
+                        GridIndent gridIndent = new GridIndent();
+                        gridIndent.SlNo = counter + 1;
+                        gridIndent.ItemCategoryName = Convert.ToString(dataSet.Tables[0].Rows[counter]["ItemCategoryName"]);
+                        gridIndent.ItemName = Convert.ToString(dataSet.Tables[0].Rows[counter]["ItemName"]);
+                        gridIndent.ItemCode = Convert.ToString(dataSet.Tables[0].Rows[counter]["ItemCode"]);
+                        gridIndent.Units = Convert.ToString(dataSet.Tables[0].Rows[counter]["Unit"]);
+                        gridIndent.Description = Convert.ToString(dataSet.Tables[0].Rows[counter]["Description"]);
+                        gridIndent.Technical_Specifications = Convert.ToString(dataSet.Tables[0].Rows[counter]["TechnicalSpecification"]);
+                        gridIndent.Quantity = Convert.ToInt32(dataSet.Tables[0].Rows[counter]["Quantity"]);
+                        gridIndent.Remarks = Convert.ToString(dataSet.Tables[0].Rows[counter]["Item Remarks"]);
+                        gridIndents.Add(gridIndent);
+
+                        saveIndent.Email = Convert.ToString(dataSet.Tables[0].Rows[counter]["Email"]);
+                        counter++;
+                    }
+                    dataSet.Dispose();
+                }
+                saveIndent.GridIndents = gridIndents;
+                return saveIndent;
+            }
+            catch (Exception ex)
+            {
+                ////log.Error("Error while fetching Indent information: " + ex.StackTrace);
+                return saveIndent;
+            }
+        }
+
         [HttpPost]
         public IActionResult IndexSubmit(IFormCollection loginCredentials)
         {
             string userName = loginCredentials["UserName"];
             string password = loginCredentials["Password"];
-            long indentNo = Convert.ToInt64(loginCredentials["IndentNo"]);
+            indentNo = Convert.ToInt64(loginCredentials["IndentNo"]);
             ViewBag.IndentNo = indentNo;
 
             try
