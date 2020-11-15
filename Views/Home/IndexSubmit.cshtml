@@ -5,93 +5,46 @@
 }
 
 @*<div style="background-color:#ffffff;align-self:center" >*@
-<form asp-action="UpdateIndentStatus" method="post">
-    @*<div class="row">
-            <label class="col-md-4 float-right text-right">Indent Number</label>
-            <input type="text" name="IndentNumber" id="IndentNumber" disabled value="@ViewBag.IndentNo" />
-            <input type="hidden" name="IndentNo" value="@ViewBag.IndentNo" />
-        </div>
-        <div class="row">
-            <label class="col-md-4 float-right text-right" name="IndentStatus">IndentStatus</label>
-            <div class="col-md-2 float-left text-left">
-                <select name="UpdateStatus" id="UpdateStatus" onchange="indentStatusCheck(event)">
-                    <option> Select Status </option>
+<div class="container align-content-center col-md-10">
+    <form asp-action="UpdateIndentStatus" method="post">
+        <div class=" align-items-center justify-content-center" style="background-color : white">
+            <div class="row">&nbsp;</div>
+            <div class="row">
+                <!--<label for="UserName">User Name</label>-->
+                <label class="col-md-4 float-left text-right label">Indent Number</label>
+                <input type="text" class="textboxinner" name="IndentNumber" id="IndentNumber" disabled value="@ViewBag.IndentNo" />
+                <input type="hidden" name="IndentNo" value="@ViewBag.IndentNo" />
+                <input type="hidden" id="ApprovalStatus" name="ApprovalStatus" value="@ViewBag.ApprovalStatus" />
+            </div>
+            <div class="vs10">&nbsp;</div>
+            <div class="inner-addon left-addon">
+                <label class="col-md-4 float-left text-right label" name="IndentStatus">Indent Status</label>
+                @*<div class="col-md-2 float-left text-left">*@
+                <select name="UpdateStatus" class="dropdowninner" id="UpdateStatus" onchange="indentStatusCheck(event)">
+                    <option class="optiontext"> Select Status </option>
                     @foreach (var item in Model)
                     {
                         <option> @item.Status</option>
                     }
                 </select>
+                @*</div>*@
+            </div>
+            <div class="vs10">&nbsp;</div>
+            <div class="inner-addon left-addon">
+                <label class="col-md-4 float-left text-right label" name="Remarks">Remarks</label>
+                <textarea class="col-md-6 float-left text-left textareainner" id="txtarea_Remarks" name="TextArea"></textarea>
+            </div>
+            <div class="vs10">&nbsp;</div>
+            <div class="row-center">
+                <input type="submit" class="button buttonsubmit" value="Submit" id="ApprovalSubmit" disabled />
+                <div class="row">&nbsp;</div>
+            </div>
+            <div id="indentDetails">
             </div>
         </div>
-        <div class="row">
-            <label class="col-md-4 float-right text-right" name="Remarks">Remarks</label>
-            <textarea class="col-md-6 float-left text-left" id="txtarea_Remarks" name="TextArea"></textarea>
-        </div>
-        <div class="row">
-            <div class="col-md-10 float-right text-right">
-                <input type="submit" value="Submit" id="ApprovalSubmit" disabled />
-            </div>
-        </div>*@
 
-    <div class="topFrame">
-        <div class="innerTopFrame">
-            <div class="main-container box-shadow-light">
-                <section id="mainForm">
-                    <div class="content-center">
-                        <div class="title-logo">
-
-                        </div>
-                        @*<div class="login-logo"><img src="~/Content/images/rico-logo.png" alt="RICO"></div>*@
-                        <div class="vs5">&nbsp;</div>
-                        <div class="main-form">
-                            <div class="row">
-                                <!--<label for="UserName">User Name</label>-->
-                                <label class="col-md-4 float-left text-right label">Indent Number</label>
-                                <input type="text" class="textboxinner" name="IndentNumber" id="IndentNumber" disabled value="@ViewBag.IndentNo" />
-                                <input type="hidden" name="IndentNo" value="@ViewBag.IndentNo" />
-                                <input type="hidden" id="ApprovalStatus" name="ApprovalStatus" value="@ViewBag.ApprovalStatus" />
-                            </div>
-                            <div class="vs10">&nbsp;</div>
-                            <div class="inner-addon left-addon">
-                                <label class="col-md-4 float-left text-right label" name="IndentStatus">Indent Status</label>
-                                @*<div class="col-md-2 float-left text-left">*@
-                                <select name="UpdateStatus" class="dropdowninner" id="UpdateStatus" onchange="indentStatusCheck(event)">
-                                    <option class="optiontext"> Select Status </option>
-                                    @foreach (var item in Model)
-                                    {
-                                        <option> @item.Status</option>
-                                    }
-                                </select>
-                                @*</div>*@
-                            </div>
-                            <div class="vs10">&nbsp;</div>
-                            <div class="inner-addon left-addon">
-                                <label class="col-md-4 float-left text-right label" name="Remarks">Remarks</label>
-                                <textarea class="col-md-6 float-left text-left textareainner" id="txtarea_Remarks" name="TextArea"></textarea>
-                            </div>
-                            <div class="vs10">&nbsp;</div>
-                            <div class="row-center">
-                                <input type="submit" class="button buttonsubmit" value="Submit" id="ApprovalSubmit" disabled />
-                                @*<div class="col-md-4 col-sm-5 col-xl-12">
-                                        <input type="submit" class="button buttonsubmit" value="Submit" id="ApprovalSubmit" disabled />
-                                    </div>*@
-                            </div>
-                            <div id="indentDetails">
-                            </div>
-                        </div>
-                </section>
-
-
-            </div>
-        </div>
-        @*<partial name="RenderMenu.cshtml" />*@
-        @*<div class="content-right">
-                <img src="~/Content/images/loginright.png">
-            </div>
-            <div class="vs0">&nbsp;</div>*@
-    </div>
-    </div>
-</form>
+    </form>
+</div>
 @*</div>*@
 <script src="~/js/Validation.js"></script>
 <script src="~/lib/jquery/dist/jquery.js"></script>
@@ -106,9 +59,9 @@
         $.get('/Home/GetIndentDetails', {}, function (data) {
             debugger;
             var tblEmployee = $("#indentDetails");
-            var tr = "<html> <head> <style>.tableborder{border:1px; border-style:solid; border.color:red;}.tdDist{width: 100%;}</style> </head> <body> <table width='60%' border=1 border-style='solid' border-color='#8CBD48'> <tr> <td colspan=9 style='background-color:#EBF8F0;color:#6C6C6C;font-family:Verdana; vertical-align:middle'><h2><i><center>SLPP RENEW LLP<center></i></h2></td></tr><tr> <td colspan=9 style='background-color:#EBF8F0;color:#6C6C6C;font-family:Verdana;vertical-align:middle'><h2><center><i><u>MATERIAL INDENT FORM</u></i></center></h2></td></tr><tr> <td colspan=7 style='background-color:#EBF8F0;color:#6C6C6C;font-family:Verdana;'><i>Related WBS No: </i></td><td style='background-color:#EBF8F0;color:#6C6C6C;font-family:Verdana;'><i>Indent No :</td><td style='background-color:#EBF8F0;color:#6C6C6C;font-family:Verdana;'>";
+            var tr = "<html> <head> <style>.tableborder{border:1px; border-style:solid; border.color:red;}.tdDist{width: 100%;}</style> </head> <body> <table width='100%' border=1 border-style='solid' border-color='#8CBD48'> <tr> <td colspan=9 style='background-color:#EBF8F0;color:#6C6C6C;font-family:Verdana; vertical-align:middle'><h2><i><center>SLPP RENEW LLP<center></i></h2></td></tr><tr> <td colspan=9 style='background-color:#EBF8F0;color:#6C6C6C;font-family:Verdana;vertical-align:middle'><h2><center><i><u>MATERIAL INDENT FORM</u></i></center></h2></td></tr><tr> <td colspan=7 style='background-color:#EBF8F0;color:#6C6C6C;font-family:Verdana;'><i>Related WBS No: </i></td><td style='background-color:#EBF8F0;color:#6C6C6C;font-family:Verdana;'><i>Indent No :</td><td style='background-color:#EBF8F0;color:#6C6C6C;font-family:Verdana;'>";
             tr = tr + "<i>" + data.IndentNo + "</i>";
-            tr = tr + " " + ("</td></tr><tr> <td colspan=7 style='background-color:#EBF8F0;color:#6C6C6C;font-family:Verdana;'><i>Approved By: </i></td><td style='background-color:#EBF8F0;color:#6C6C6C;font-family:Verdana;'><i>Approved On :</td><td style='background-color:#EBF8F0;color:#6C6C6C;font-family:Verdana;'><i></i></td></tr></table> <table width='60%' border=1 border-style='solid' border-color='#8CBD48'> <tr style='background-color:#609F19;color:#FFFFFF;font-family:Verdana;font-size:11;vertical-align:middle'><td>Item Code</td><td>Item Category Name</td><td>Item Name</td><td>Technical Specifications</td><td>Units</td><td>Quantity</td><td>Remarks</td></tr>")
+            tr = tr + " " + ("</td></tr><tr> <td colspan=7 style='background-color:#EBF8F0;color:#6C6C6C;font-family:Verdana;'><i>Approved By: </i></td><td style='background-color:#EBF8F0;color:#6C6C6C;font-family:Verdana;'><i>Approved On :</td><td style='background-color:#EBF8F0;color:#6C6C6C;font-family:Verdana;'><i></i></td></tr></table> <table width='100%' border=1 border-style='solid' border-color='#8CBD48'> <tr style='background-color:#609F19;color:#FFFFFF;font-family:Verdana;font-size:11;vertical-align:middle'><td>Item Code</td><td>Item Category Name</td><td>Item Name</td><td>Technical Specifications</td><td>Units</td><td>Quantity</td><td>Remarks</td></tr>")
             $.each(data.gridIndents, function (i, val) {
                 tr = tr + " " + "<tr>";
                 tr = tr + " " + ("<td>" + val.slNo + "</td>");
