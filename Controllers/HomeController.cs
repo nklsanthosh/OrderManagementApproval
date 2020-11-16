@@ -26,6 +26,7 @@ namespace OrderManagementApproval.Controllers
         ApprovalEmail approvalEmail = new ApprovalEmail();
         private string ApproverName = "";
         private string CreatedEmail = "";
+        private string POCreatorEmail = "";
         private long indentNo;
 
         public HomeController(ILogger<HomeController> logger)
@@ -95,26 +96,27 @@ namespace OrderManagementApproval.Controllers
             return PartialView("_MenuBar", saveIndent.GridIndents);
         }
 
-        public SaveIndent GetIndentDetails()
+        [Route("Home/GetIndentDetails/{Id}")]
+        public SaveIndent GetIndentDetails(long Id)
         {
-            SaveIndent saveIndent = GetIndent(indentNo);
+            SaveIndent saveIndent = GetIndent(Id);
             return saveIndent;
         }
 
-        private SaveIndent GetIndent(long indentNo)
+        private SaveIndent GetIndent(long Id)
         {
             SaveIndent saveIndent = new SaveIndent();
             long ApprovalId = Convert.ToInt64(HttpContext.Session.GetString(SessionUserID));
             try
             {
                 List<GridIndent> gridIndents = new List<GridIndent>();
-              
+
                 using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["SqlConnection"].ToString()))
                 {
                     connection.Open();
                     SqlCommand testCMD = new SqlCommand("GetIndent", connection);
                     testCMD.CommandType = CommandType.StoredProcedure;
-                    testCMD.Parameters.Add(new SqlParameter("@IndentID", System.Data.SqlDbType.BigInt, 50) { Value = indentNo });
+                    testCMD.Parameters.Add(new SqlParameter("@IndentID", System.Data.SqlDbType.BigInt, 50) { Value = Id });
                     testCMD.Parameters.Add(new SqlParameter("@UserID", System.Data.SqlDbType.VarChar, 300) { Value = ApprovalId });
                     SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(testCMD);
 
@@ -246,6 +248,7 @@ namespace OrderManagementApproval.Controllers
                     {
                         ApproverName = approvalInfo.Tables[0].Rows[0]["ApproverName"].ToString();
                         CreatedEmail = approvalInfo.Tables[0].Rows[0]["CreatedEmail"].ToString();
+                        POCreatorEmail = approvalInfo.Tables[0].Rows[0]["POCreatorEmail"].ToString();
                     }
                     if (textArea == null || textArea == "")
                     {
@@ -284,22 +287,75 @@ namespace OrderManagementApproval.Controllers
 
                     if (textArea == null || textArea == "")
                     {
-                        mm.Body = " Your Indent Number" + indentNumber + " is " + status + " by " + ApproverName;
+                        mm.Body = " Your Indent Number " + indentNumber + " is " + status + " by " + ApproverName;
                     }
 
                     else
                     {
-                        mm.Body = " Your Indent Number" + indentNumber + " is " + status + " by " + ApproverName + " with Remarks: " + textArea;
+                        mm.Body = " Your Indent Number " + indentNumber + " is " + status + " by " + ApproverName + " with Remarks: " + textArea;
                     }
 
                     mm.IsBodyHtml = false;
 
                     SmtpClient smtp = new SmtpClient();
                     smtp.Host = ConfigurationManager.AppSettings["Host"];
-                    smtp.EnableSsl = true;
+                    smtp.EnableSsl = false;
                     NetworkCredential NetworkCred = new NetworkCredential(ConfigurationManager.AppSettings["Username"],
                         ConfigurationManager.AppSettings["Password"]);
-                    smtp.UseDefaultCredentials = true;
+                    smtp.UseDefaultCredentials = false;
+                    smtp.Credentials = NetworkCred;
+                    smtp.Port = int.Parse(ConfigurationManager.AppSettings["Port"]);
+
+                    message = DateTime.Now + " Sending Mail\n";
+                    smtp.Send(mm);
+                    message = DateTime.Now + " Mail Sent\n";
+
+                    System.Threading.Thread.Sleep(3000);
+
+                    if (status == "Approved")
+                    {
+                        mailSent = SendPOMail(indentNumber, status, textArea, ApproverName, POCreatorEmail);
+                    }
+                    return mailSent;
+                }
+            }
+            catch (Exception ex)
+            {
+                return mailSent;
+            }
+        }
+
+        private bool SendPOMail(long indentNumber, string status, string textArea, string ApproverName, string POCreatorEmail)
+        {
+            bool mailSent = false;
+            try
+            {
+                string message = DateTime.Now + " In SendMail\n";
+
+                using (MailMessage mm = new MailMessage())
+                {
+                    mm.From = new MailAddress(Convert.ToString(ConfigurationManager.AppSettings["MailFrom"]));
+                    mm.To.Add(POCreatorEmail);
+                    mm.Subject = "Indent Number - " + indentNumber + " PO Creation";
+
+                    if (textArea == null || textArea == "")
+                    {
+                        mm.Body = " Your Indent Number " + indentNumber + " is " + status + " by " + ApproverName + " and ready for PO Creation";
+                    }
+
+                    else
+                    {
+                        mm.Body = " Your Indent Number " + indentNumber + " is " + status + " by " + ApproverName + " with Remarks: " + textArea + " and ready for PO Creation";
+                    }
+
+                    mm.IsBodyHtml = false;
+
+                    SmtpClient smtp = new SmtpClient();
+                    smtp.Host = ConfigurationManager.AppSettings["Host"];
+                    smtp.EnableSsl = false;
+                    NetworkCredential NetworkCred = new NetworkCredential(ConfigurationManager.AppSettings["Username"],
+                        ConfigurationManager.AppSettings["Password"]);
+                    smtp.UseDefaultCredentials = false;
                     smtp.Credentials = NetworkCred;
                     smtp.Port = int.Parse(ConfigurationManager.AppSettings["Port"]);
 
