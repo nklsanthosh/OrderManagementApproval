@@ -252,12 +252,12 @@ namespace OrderManagementApproval.Controllers
                     }
                     if (textArea == null || textArea == "")
                     {
-                        ViewBag.Message = "Indent " + indentNumber + " is updated successfully to " + status + " by " + ApproverName;
+                        ViewBag.Message = "Indent " + indentNumber + " is " + status + " by " + ApproverName;
                     }
 
                     else
                     {
-                        ViewBag.Message = "Indent " + indentNumber + " is updated successfully to " + status + "With Remarks" + textArea + " by " + ApproverName;
+                        ViewBag.Message = "Indent " + indentNumber + " is " + status + "With Remarks" + textArea + " by " + ApproverName;
                     }
 
                     SendMail(Convert.ToInt64(indentNumber), status, textArea, ApproverName);
@@ -314,7 +314,7 @@ namespace OrderManagementApproval.Controllers
 
                     if (status == "Approved")
                     {
-                        mailSent = SendPOMail(indentNumber, status, textArea, ApproverName, POCreatorEmail);
+                        mailSent = SendPOMail(indentNumber, status, textArea, ApproverName, CreatedEmail);
                     }
                     return mailSent;
                 }
