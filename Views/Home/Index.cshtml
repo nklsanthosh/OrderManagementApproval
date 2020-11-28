@@ -39,6 +39,16 @@
                                     <img src="~/Images/icons/icon_member.jpg" /><br />
                                     <span class="welcome">Welcome</span>
                                 </div><br /><br />
+                                            <div class="inner-addon left-addon">
+                                                <!--<label for="UserName">User Name</label>-->
+                                                <select id="type" class="dropdowninner">
+                                                    <option>Select Type</option>
+                                                    <option value="I">Indent</option>
+                                                    <option value="P">Purchase Order</option>
+                                                </select>
+                                                <input type="hidden" id="typeBox" name="type" value="@ViewBag.Type" />
+                                            </div>
+                                <div class="vs10">&nbsp;</div>
                                 <div class="inner-addon left-addon">
                                     <!--<label for="UserName">User Name</label>-->
                                     <input id="IndentNo" name="IndentNo" type="number" class="textbox username" placeholder="Enter IndentNumber" value="@ViewBag.IndentNo" />
@@ -79,3 +89,8 @@
 
 
 <script src="~/js/Validation.js"></script>
+<script type="text/javascript">
+    debugger;
+    var type = document.getElementById("typeBox").value;
+    document.getElementById("type").value = type;
+</script>

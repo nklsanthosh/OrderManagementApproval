@@ -39,9 +39,10 @@ namespace OrderManagementApproval.Controllers
         [Route("{Id?}")]
         [Route("Home")]
         [Route("Home/{Id?}")]
-        public IActionResult Index(long Id, string ErrorMessage = "")
+        public IActionResult Index(long Id, string type, string ErrorMessage = "")
         {
             ViewBag.IndentNo = Id;
+            ViewBag.Type = type;
             ViewBag.ErrorMessage = ErrorMessage;
             return View();
         }
